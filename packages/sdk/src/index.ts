@@ -2,6 +2,7 @@ import { parseWHIPIceLinkHeader } from "./util";
 import { EventEmitter } from "events";
 import { WHIPProtocol } from "./WHIPProtocol";
 import { SessionDescription, parse, write } from 'sdp-transform'
+import { setupMediaRecorder } from './mediaRecorder';
 
 export interface WHIPClientIceServer {
   urls: string;
@@ -268,6 +269,8 @@ export class WHIPClient extends EventEmitter {
     mediaStream
       .getTracks()
       .forEach((track) => this.peer.addTrack(track, mediaStream));
+
+    setupMediaRecorder(mediaStream);
 
     await this.startSdpExchange();
   }
