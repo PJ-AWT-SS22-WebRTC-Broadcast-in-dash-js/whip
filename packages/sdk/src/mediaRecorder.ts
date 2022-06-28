@@ -5,7 +5,10 @@ let socket = null;
 
 export function setupMediaRecorder(stream: MediaStream) {
   const timeslice = 5000;
-  const mediaRecorder = new MediaRecorder(stream);
+  const mediaRecorder = new MediaRecorder(stream, {
+    mimeType: 'video/webm;codecs=h264',
+    videoBitsPerSecond: 3 * 1024 * 1024
+  });
   mediaRecorder.ondataavailable = handleDataAvailable;
   mediaRecorder.start(timeslice);
   socket = io('http://localhost:3104', {transports: ['websocket'], upgrade: false});
