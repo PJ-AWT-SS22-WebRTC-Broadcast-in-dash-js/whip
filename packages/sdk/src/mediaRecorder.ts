@@ -7,11 +7,11 @@ export function setupMediaRecorder(stream: MediaStream) {
   const timeslice = 5000;
   const mediaRecorder = new MediaRecorder(stream, {
     mimeType: 'video/webm;codecs=h264',
-    videoBitsPerSecond: 3 * 1024 * 1024
+    videoBitsPerSecond: 3 * 360 * 360
   });
   mediaRecorder.ondataavailable = handleDataAvailable;
   mediaRecorder.start(timeslice);
-  socket = io('http://localhost:3104', {transports: ['websocket'], upgrade: false});
+  socket = io('http://localhost:3104');
 }
 
 function handleDataAvailable(event) {
@@ -19,7 +19,7 @@ function handleDataAvailable(event) {
   if (event.data.size > 0) {
     recordedChunks.push(event.data);
     socket.emit('data', event.data);
-    pipeToFfmpeg(recordedChunks);
+    // pipeToFfmpeg(recordedChunks);
   } else {
     console.log("event.data.size is <= 0.");
   }
