@@ -12,6 +12,7 @@ export function setupMediaRecorder(stream: MediaStream) {
   mediaRecorder.ondataavailable = handleDataAvailable;
   mediaRecorder.start(timeslice);
   socket = io('http://localhost:3104');
+  return socket
 }
 
 function handleDataAvailable(event) {
@@ -44,4 +45,14 @@ function downloadVideo(video_url) {
   a.href = video_url;
   a.download = 'test.webm';
   a.click();
+}
+
+async function registerPushWebrtcLinkToUll() {
+    /*
+    webrtcLink = document.querySelectorAll("#resources ul li")[1].querySelector("a").getAttribute("href")
+    webrtcLink.change(function() {
+      alert('something');
+      // socket.emit('webrtc_link', event.data);
+    })
+    */
 }

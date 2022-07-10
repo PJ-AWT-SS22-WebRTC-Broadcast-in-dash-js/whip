@@ -3,6 +3,8 @@ import { EventEmitter } from "events";
 import { WHIPProtocol } from "./WHIPProtocol";
 import { SessionDescription, parse, write } from 'sdp-transform'
 import { setupMediaRecorder } from './mediaRecorder';
+import { Socket } from "socket.io-client";
+
 
 export interface WHIPClientIceServer {
   urls: string;
@@ -42,6 +44,8 @@ export class WHIPClient extends EventEmitter {
   private mediaMids: Array<string> = [];
   private whipProtocol: WHIPProtocol;
   private peerConnectionFactory: (configuration: RTCConfiguration) => RTCPeerConnection;
+
+  private socket: undefined | Socket;
 
   constructor({ endpoint, opts, whipProtocol, peerConnectionFactory }: WHIPClientConstructor) {
     super();
@@ -210,6 +214,9 @@ export class WHIPClient extends EventEmitter {
 
       this.extensions = response.headers.get("Link").split(",").map(v => v.trimStart());
       this.log("WHIP Resource Extensions", this.extensions);
+      if (this.socket) {
+        this.socket.emit('webrtclink', this.extensions[1].split(";")[0].slice(1,-1));
+      }
 
       if (this.resourceResolve) {
         this.resourceResolve(this.resource);
@@ -270,8 +277,7 @@ export class WHIPClient extends EventEmitter {
       .getTracks()
       .forEach((track) => this.peer.addTrack(track, mediaStream));
 
-    setupMediaRecorder(mediaStream);
-
+    this.socket = setupMediaRecorder(mediaStream);
     await this.startSdpExchange();
   }
 
