@@ -1,9 +1,9 @@
-FROM node:14-slim
+FROM node:16
 
-ADD . /app
-WORKDIR /app
+WORKDIR usr/src/app
+COPY package*.json ./
 RUN npm install
-RUN npx lerna bootstrap
-RUN npm run build
-
-CMD [ "npm", "start" ]
+COPY . .
+EXPOSE 1234
+EXPOSE 8000
+CMD [ "npm", "run", "dev" ]
